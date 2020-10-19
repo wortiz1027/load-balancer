@@ -1,0 +1,15 @@
+server:
+  port: 8080
+  servlet:
+    context-path: /
+    session:
+      cookie:
+        name: UISESSION
+
+servidor:
+  title: Taller 1 - Nuevas Tecnologias Para Arquitectura Empresarial
+  university: Pontificia Universidad Javeriana
+  info:
+    title: Nuevas Tecnologias
+    name: ${SERVER_NAME:Javeriana}
+    username: ${USER_NAME:Javeriana}
