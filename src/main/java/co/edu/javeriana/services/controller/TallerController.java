@@ -5,10 +5,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import java.net.InetAddress;
-import java.net.UnknownHostException;
+import java.net.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Enumeration;
 
 @Controller
 public class TallerController {
@@ -37,23 +37,46 @@ public class TallerController {
 
         InetAddress ip = null;
         String hostname = "";
+        String ipAddress = "";
         try {
             ip = InetAddress.getLocalHost();
             hostname = ip.getHostName();
 
-            System.out.println("Your current IP address : " + ip);
-            System.out.println("Your current Hostname : " + hostname);
+            Enumeration e = NetworkInterface.getNetworkInterfaces();
+            while(e.hasMoreElements())
+            {
+                NetworkInterface n = (NetworkInterface) e.nextElement();
 
-        } catch (UnknownHostException e) {
+                Enumeration ee = n.getInetAddresses();
+                while (ee.hasMoreElements())
+                {
+                    ip = (InetAddress) ee.nextElement();
+
+                    if(ip instanceof Inet4Address && !ip.isLoopbackAddress())
+                    {
+                        if (n.getName().equalsIgnoreCase("ham0")) {
+                            System.out.println(n.getName() + " - " + ip.getHostAddress());
+                            ipAddress = ip.getHostAddress();
+                            break;
+                        }
+                    }
+
+                }
+            }
+
+        } catch (UnknownHostException | SocketException e) {
             e.printStackTrace();
         }
+
+        System.out.println("Your current IP address : " + ipAddress);
+        System.out.println("Your current Hostname : " + hostname);
 
         model.addAttribute("university", university);
         model.addAttribute("description", description);
 
         model.addAttribute("title", title);
         model.addAttribute("name", hostname);
-        model.addAttribute("ip", ip.getHostAddress());
+        model.addAttribute("ip", ipAddress);
         model.addAttribute("username", username);
         model.addAttribute("datetime", datetime);
 
